@@ -8,14 +8,9 @@ class SnowflakeConnect():
     self.con = snowflake_connection
     
   
-  # def get_connection(self):
-  #   return snowflake.connector.connect(user=self.snowflake_creds.get('snowflake_user'),
-  #                                       password=self.snowflake_creds.get('snowflake_password'),
-  #                                       account=self.snowflake_creds.get('snowflake_account'),
-  #                                       warehouse=self.snowflake_creds.get('snowflake_warehouse'),
-  #                                       database=self.snowflake_creds.get('snowflake_database'),
-  #                                       schema=self.snowflake_creds.get('snowflake_schema')
-  #                                         )
+  def get_connection(self):
+    return self.con
+
   def close_connection(self):
     self.con.close()
     
