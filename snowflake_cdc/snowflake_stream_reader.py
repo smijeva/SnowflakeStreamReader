@@ -131,7 +131,7 @@ class SnowflakeStreamReader():
 
       
       
-  def read_snowflake_stream(self, config):
+  def read_snowflake_stream(self, config, snowflake_connection):
     """
     Function to setup and read a table from snowflake as a stream. This funciton allows the user to specify a single table to read from Snowflake 
     and will automatically create (if they don't exist) all the required objects in Snowflake.  
@@ -143,7 +143,7 @@ class SnowflakeStreamReader():
     sc_name = config.get('schema_name') if config.get('schema_name') is not None else config.get('snowflake_schema')
     
     snowflake_creds = {'snowflake_user': config.get('snowflake_user'), 'snowflake_password': config.get('snowflake_password'), 'snowflake_account': config.get('snowflake_account')}
-    sfConnect = SnowflakeConnect(snowflake_creds)
+    sfConnect = SnowflakeConnect(snowflake_connection)
     
     sfTable = SnowflakeTable(database_name=db_name, schema_name=sc_name, table_name=config.get('table_name'), merge_keys=config.get("merge_keys"))
     

@@ -1,21 +1,21 @@
-import snowflake.connector 
+import snowflake.connector
 from time import sleep
 
 class SnowflakeConnect():
   
-  def __init__(self, snowflake_creds):
-    self.snowflake_creds = snowflake_creds
-    self.con = self.get_connection()
+  def __init__(self, snowflake_connection):
+    # self.snowflake_creds = snowflake_creds
+    self.con = snowflake_connection
     
   
-  def get_connection(self):
-    return snowflake.connector.connect(user=self.snowflake_creds.get('snowflake_user'),
-                                        password=self.snowflake_creds.get('snowflake_password'),
-                                        account=self.snowflake_creds.get('snowflake_account'),
-                                        warehouse=self.snowflake_creds.get('snowflake_warehouse'),
-                                        database=self.snowflake_creds.get('snowflake_database'),
-                                        schema=self.snowflake_creds.get('snowflake_schema')
-                                          )
+  # def get_connection(self):
+  #   return snowflake.connector.connect(user=self.snowflake_creds.get('snowflake_user'),
+  #                                       password=self.snowflake_creds.get('snowflake_password'),
+  #                                       account=self.snowflake_creds.get('snowflake_account'),
+  #                                       warehouse=self.snowflake_creds.get('snowflake_warehouse'),
+  #                                       database=self.snowflake_creds.get('snowflake_database'),
+  #                                       schema=self.snowflake_creds.get('snowflake_schema')
+  #                                         )
   def close_connection(self):
     self.con.close()
     
@@ -81,7 +81,7 @@ class SnowflakeConnect():
     
     return self.run_query(f"""
         CREATE STREAM IF NOT EXISTS {database_name}.{schema_name}.{table_name}_stream
-        ON TABLE {database_name}.{schema_name}.{table_name} 
+        ON {database_name}.{schema_name}.{table_name} 
         APPEND_ONLY = FALSE -- gives updates and deletes
         SHOW_INITIAL_ROWS = TRUE ; -- for the initial rows for the first pull then only new/updated rows 
     """)
