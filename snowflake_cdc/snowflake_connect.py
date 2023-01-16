@@ -4,9 +4,7 @@ from time import sleep
 class SnowflakeConnect():
   
   def __init__(self, snowflake_connection):
-    # self.snowflake_creds = snowflake_creds
     self.con = snowflake_connection
-    
   
   def get_connection(self):
     return self.con
