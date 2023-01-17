@@ -74,7 +74,7 @@ class SnowflakeConnect():
     
     return self.run_query(f"""
         CREATE STREAM IF NOT EXISTS {database_name}.{schema_name}.{table_name}_stream
-        ON {database_name}.{schema_name}.{table_name} 
+        ON VIEW {database_name}.{schema_name}.{table_name} 
         APPEND_ONLY = FALSE -- gives updates and deletes
         SHOW_INITIAL_ROWS = TRUE ; -- for the initial rows for the first pull then only new/updated rows 
     """)
