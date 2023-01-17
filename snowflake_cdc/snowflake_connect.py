@@ -80,7 +80,7 @@ class SnowflakeConnect():
     """)
     
     
-  def create_snowflake_task(self, snowflake_table, snowflake_namespace):
+  def create_snowflake_task(self, snowflake_table, snowflake_namespace, snowflake_warehouse):
     database_name = snowflake_table.database_name
     schema_name = snowflake_table.schema_name 
     table_name = snowflake_table.table_name 
@@ -89,11 +89,11 @@ class SnowflakeConnect():
     
     return self.run_query(f"""
         CREATE OR REPLACE TASK {database_name}.{schema_name}.{table_name}_stream_task
-        SCHEDULE = '{snowflake_table.task_schedule}' -- Change as needed 
+        SCHEDULE = '60 MINUTE' -- Change as needed 
         ALLOW_OVERLAPPING_EXECUTION = FALSE -- if they overlap then we may get duplicates from the stream if the previous DML is not complete 
-        USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = '{snowflake_table.task_warehouse_size}' -- using Snowflake Serverless compute 
+        WAREHOUSE = '{snowflake_warehouse}' -- using Snowflake Serverless compute 
         AS 
-          COPY INTO @{stage_name}/{database_name}/{schema_name}/{table_name}
+          COPY INTO @snowflake_stage/{database_name}/{schema_name}/{table_name}
           FROM (
           SELECT OBJECT_CONSTRUCT(*) as row_value FROM (SELECT *, current_timestamp() as load_datetime FROM {table_name}_stream )
               )
@@ -125,11 +125,11 @@ class SnowflakeConnect():
     self.run_query(f"ALTER TASK IF EXISTS {database_name}.{schema_name}.{table_name}_stream_task {status}")
   
     
-  def table_setup(self, snowflake_table, snowflake_namespace):
+  def table_setup(self, snowflake_table, snowflake_namespace, snowflake_warehouse):
     task_status = 'SUSPEND' if snowflake_table.enabled == False else 'RESUME'
     
     stream_query_id = self.create_snowflake_stream(snowflake_table)
-    task_query_id = self.create_snowflake_task(snowflake_table, snowflake_namespace)
+    task_query_id = self.create_snowflake_task(snowflake_table, snowflake_namespace, snowflake_warehouse)
     self.set_task_status(snowflake_table=snowflake_table, status=task_status)
     return stream_query_id, task_query_id
   

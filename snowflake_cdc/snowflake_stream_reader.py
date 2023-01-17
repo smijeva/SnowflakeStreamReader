@@ -141,7 +141,7 @@ class SnowflakeStreamReader():
     """
     db_name = config.get('database_name') if config.get('database_name') is not None else config.get('snowflake_database')
     sc_name = config.get('schema_name') if config.get('schema_name') is not None else config.get('snowflake_schema')
-    
+
     snowflake_creds = {'snowflake_user': config.get('snowflake_user'), 'snowflake_password': config.get('snowflake_password'), 'snowflake_account': config.get('snowflake_account')}
     sfConnect = SnowflakeConnect(snowflake_connection)
     
@@ -150,8 +150,9 @@ class SnowflakeStreamReader():
     sfNamespace = SnowflakeNamespace(config)
     sfNamespace.add_table(sfTable)
     file_query_id, stage_query_id = sfConnect.account_setup(sfNamespace) 
-    
-    sfConnect.table_setup(sfTable, sfNamespace)
+
+    snowflake_warehouse = config.get('snowflake_warehouse')
+    sfConnect.table_setup(sfTable, sfNamespace, snowflake_warehouse)
 
     dir_location = config.get('dir_location') if config.get('dir_location') is not None else self.get_data_path(sfTable, sfNamespace)
     schema_path = config.get('schema_path') if config.get('schema_path') is not None else self.get_table_schema_location(sfTable, sfNamespace)
